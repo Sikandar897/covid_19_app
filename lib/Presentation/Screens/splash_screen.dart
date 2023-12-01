@@ -15,16 +15,21 @@ class SplashScreenState extends State<SplashScreen>
   late AnimationController animationController =
       AnimationController(duration: const Duration(seconds: 3), vsync: this)
         ..repeat();
+
+  /* it will dispose the controller means just to make sure screen is disconnected with the controller*/
+  @override
+  void dispose() {
+    super.dispose();
+    animationController.dispose();
+  }
+
   @override
   void initState() {
     super.initState();
-    /* it will dispose the controller means just to make sure screen is disconnected with the controller*/
-   // animationController.dispose(); 
     Timer(const Duration(seconds: 5), () {
-      Navigator.push(
-          context,
+      Navigator.push(context,
           MaterialPageRoute(builder: (context) => const WorldStatesScreen()));
-     });
+    });
   }
 
   @override
@@ -43,20 +48,25 @@ class SplashScreenState extends State<SplashScreen>
                 return Transform.rotate(
                   angle: animationController.value * 2.0 * math.pi,
                   child: SizedBox(
-                    //will be using media query latter for now i am using static
-                    height: 200,
-                    width: 200,
+                    height: MediaQuery.of(context).size.height * 0.4,
+                    width: MediaQuery.of(context).size.width * 0.4,
                     child:
                         Center(child: Image.asset('assets/images/virus.png')),
                   ),
                 );
               }),
-          SizedBox(height: MediaQuery.of(context).size.height * .08,), 
+          SizedBox(
+            height: MediaQuery.of(context).size.height * .08,
+          ),
           const Align(
             alignment: Alignment.center,
-            child: Text('  Covid-19\nTracker App', style: TextStyle(
-              fontWeight: FontWeight.bold , fontSize: 25 , color: Colors.white
-            ),),
+            child: Text(
+              '  Covid-19\nTracker App',
+              style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25,
+                  color: Colors.white),
+            ),
           )
         ],
       )),
