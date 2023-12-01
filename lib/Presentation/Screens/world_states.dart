@@ -1,5 +1,9 @@
+import 'package:covid_19_app/Data/Model/Services/states_services.dart';
+import 'package:covid_19_app/Data/Model/Services/world_states_model.dart';
+import 'package:covid_19_app/Presentation/Screens/countries_list.dart';
 import 'package:flutter/material.dart';
 import 'package:pie_chart/pie_chart.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class WorldStatesScreen extends StatefulWidget {
   const WorldStatesScreen({super.key});
@@ -10,13 +14,20 @@ class WorldStatesScreen extends StatefulWidget {
 
 class _WorldStatesScreenState extends State<WorldStatesScreen>
     with TickerProviderStateMixin {
-  late AnimationController animationController =
-      AnimationController(duration: const Duration(seconds: 3), vsync: this)
-        ..reset();
+  late AnimationController animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    animationController =
+        AnimationController(duration: const Duration(seconds: 3), vsync: this)
+          ..reset();
+  }
+
   @override
   void dispose() {
-    super.dispose();
     animationController.dispose();
+    super.dispose();
   }
 
   final colorList = <Color>[
@@ -27,55 +38,120 @@ class _WorldStatesScreenState extends State<WorldStatesScreen>
 
   @override
   Widget build(BuildContext context) {
+    StateServices stateServices = StateServices();
     return Scaffold(
       backgroundColor: Colors.black87,
       body: SafeArea(
-          child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            SizedBox(
-              height: MediaQuery.of(context).size.height * .01,
-            ),
-            PieChart(
-              dataMap: const {'total': 20, 'Recovered': 15, 'Deaths': 5},
-              legendOptions:
-                  const LegendOptions(legendPosition: LegendPosition.left, legendTextStyle: TextStyle(color: Colors.white)),
-                  
-              chartRadius: MediaQuery.of(context).size.width / 3.2,
-              animationDuration: const Duration(milliseconds: 1200),
-              chartType: ChartType.ring,
-              colorList: colorList,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                  vertical: MediaQuery.of(context).size.height * .06),
-              child: const Card(
-                child: Column(
-                  children: [
-                    ReusableRow(title: 'Total', value: '200'),
-                    ReusableRow(title: 'Total', value: '200'),
-                    ReusableRow(title: 'Total', value: '200'),
-                  ],
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.01,
                 ),
-              ),
+                FutureBuilder(
+                  future: stateServices.fetchWorldStatesRecords(),
+                  builder: (context, AsyncSnapshot<WorldStatesModel> snapshot) {
+                    if (!snapshot.hasData) {
+                      return SpinKitFadingCircle(
+                        color: Colors.white,
+                        size: 50.0,
+                        controller: animationController,
+                      );
+                    } else {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          PieChart(
+                            dataMap: {
+                              'total':
+                                  double.parse(snapshot.data!.cases.toString()),
+                              'Recovered': double.parse(
+                                  snapshot.data!.recovered.toString()),
+                              'Deaths':
+                                  double.parse(snapshot.data!.deaths.toString())
+                            },
+                            chartValuesOptions: const ChartValuesOptions(
+                                showChartValuesInPercentage: true),
+                            legendOptions: const LegendOptions(
+                              legendPosition: LegendPosition.left,
+                              legendTextStyle: TextStyle(color: Colors.white),
+                            ),
+                            chartRadius:
+                                MediaQuery.of(context).size.width / 3.2,
+                            animationDuration:
+                                const Duration(milliseconds: 1200),
+                            chartType: ChartType.ring,
+                            colorList: colorList,
+                          ),
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                                vertical:
+                                    MediaQuery.of(context).size.height * 0.06),
+                            child: Card(
+                              child: Column(
+                                children: [
+                                  ReusableRow(
+                                      title: 'Updated',
+                                      value: snapshot.data!.updated.toString()),
+                                  ReusableRow(
+                                      title: 'Total Cases',
+                                      value: snapshot.data!.cases.toString()),
+                                  ReusableRow(
+                                      title: 'Today Cases',
+                                      value: snapshot.data!.deaths.toString()),
+                                  ReusableRow(
+                                      title: 'Deaths',
+                                      value:
+                                          snapshot.data!.recovered.toString()),
+                                  ReusableRow(
+                                      title: 'Today Deaths',
+                                      value: snapshot.data!.active.toString()),
+                                  ReusableRow(
+                                      title: 'Recovered',
+                                      value:
+                                          snapshot.data!.critical.toString()),
+                                  ReusableRow(
+                                      title: 'Today Recovered',
+                                      value: snapshot.data!.todayDeaths
+                                          .toString()),
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            child: Center(
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const CountriesListScreen()));
+                                },
+                                style: const ButtonStyle(
+                                  backgroundColor: MaterialStatePropertyAll(
+                                      Color(0xff1aa260)),
+                                  foregroundColor:
+                                      MaterialStatePropertyAll(Colors.white),
+                                ),
+                                child: const Text('Track Countries'),
+                              ),
+                            ),
+                          )
+                        ],
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * .05,
-              child: Center(
-                child: ElevatedButton(
-                    onPressed: () {},
-                    style: const ButtonStyle(
-                      backgroundColor:
-                          MaterialStatePropertyAll(Color(0xff1aa260)),
-                      foregroundColor: MaterialStatePropertyAll(Colors.white),
-                    ),
-                    child: const Text('Track Countires')),
-              ),
-            )
-          ],
+          ),
         ),
-      )),
+      ),
     );
   }
 }
@@ -87,15 +163,38 @@ class ReusableRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 10, right: 10, top: 10, bottom: 5),
+      padding: const EdgeInsets.only(left: 8.0),
       child: Column(
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [Text(title), Text(value)],
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 5.0),
+            child: Table(
+              columnWidths: const {
+                0: FlexColumnWidth(2), // Title column
+                1: FlexColumnWidth(1), // Spacer
+                2: FlexColumnWidth(2), // Value column
+              },
+              children: [
+                TableRow(
+                  children: [
+                    TableCell(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Text(title),
+                      ),
+                    ),
+                    TableCell(
+                      child: Container(), // Spacer
+                    ),
+                    TableCell(
+                      child: Text(value, textAlign: TextAlign.left),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: 5),
-          const Divider()
+          const Divider(),
         ],
       ),
     );
