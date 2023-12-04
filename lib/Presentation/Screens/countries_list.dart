@@ -1,4 +1,5 @@
 import 'package:covid_19_app/Data/Model/Services/states_services.dart';
+import 'package:covid_19_app/Presentation/Screens/detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
@@ -15,10 +16,15 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      appBar: AppBar(  
+        centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.black87,
+        foregroundColor: Colors.white,
+        backgroundColor: Theme.of(context).primaryColor,
+        title: const Text('Covid 19 Tracking App'),
+        
       ),
+      backgroundColor: Colors.white,
       body: SafeArea(
           child: Column(
         children: [
@@ -87,24 +93,39 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
                             if (searchController.text.isEmpty) {
                               return Column(
                                 children: [
-                                  ListTile(
-                                      leading: Image(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .08,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .08,
-                                          image: NetworkImage(
-                                              snapshot.data![index]
-                                                  ['countryInfo']['flag'])),
-                                      title: Text(
-                                          snapshot.data![index]['country']),
-                                      subtitle: Text(snapshot.data![index]
-                                              ['cases']
-                                          .toString()))
+                                  InkWell(
+                                    onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> DetailScreen(
+                                        name: snapshot.data![index]['country'],
+                                        image: snapshot.data![index]['countryInfo']['flag'],
+                                        totalCases: snapshot.data![index]['cases'],
+                                        totalDeaths: snapshot.data![index]['deaths'],
+                                        active: snapshot.data![index]['active'],
+                                        test: snapshot.data![index]['tests'],
+                                        todayRecoverd: snapshot.data![index]['todayRecovered'],
+                                        critical: snapshot.data![index]['critical'],
+                                        
+                                      )));
+                                    },
+                                    child: ListTile(
+                                        leading: Image(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                .08,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .08,
+                                            image: NetworkImage(
+                                                snapshot.data![index]
+                                                    ['countryInfo']['flag'])),
+                                        title: Text(
+                                            snapshot.data![index]['country']),
+                                        subtitle: Text(snapshot.data![index]
+                                                ['cases']
+                                            .toString())),
+                                  )
                                 ],
                               );
                             }
@@ -113,27 +134,42 @@ class _CountriesListScreenState extends State<CountriesListScreen> {
 
                             else if (name.toLowerCase().contains(
                                 searchController.text.toLowerCase())) {
-                              return Column(
-                                children: [
-                                  ListTile(
-                                      leading: Image(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .08,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .08,
-                                          image: NetworkImage(
-                                              snapshot.data![index]
-                                                  ['countryInfo']['flag'])),
-                                      title: Text(
-                                          snapshot.data![index]['country']),
-                                      subtitle: Text(snapshot.data![index]
-                                              ['cases']
-                                          .toString()))
-                                ],
+                              return InkWell(
+                                  onTap: (){
+                                      Navigator.push(context, MaterialPageRoute(builder: (context)=> DetailScreen(
+                                        name: snapshot.data![index]['country'],
+                                        image: snapshot.data![index]['countryInfo']['flag'],
+                                        totalCases: snapshot.data![index]['cases'],
+                                        totalDeaths: snapshot.data![index]['deaths'],
+                                        active: snapshot.data![index]['active'],
+                                        test: snapshot.data![index]['tests'],
+                                        todayRecoverd: snapshot.data![index]['todayRecovered'],
+                                        critical: snapshot.data![index]['critical'],
+                                        
+                                      )));
+                                    },
+                                child: Column(
+                                  children: [
+                                    ListTile(
+                                        leading: Image(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                .08,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .08,
+                                            image: NetworkImage(
+                                                snapshot.data![index]
+                                                    ['countryInfo']['flag'])),
+                                        title: Text(
+                                            snapshot.data![index]['country']),
+                                        subtitle: Text(snapshot.data![index]
+                                                ['cases']
+                                            .toString()))
+                                  ],
+                                ),
                               );
                             } else {
                               return Container();

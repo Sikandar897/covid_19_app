@@ -200,7 +200,7 @@ class ReusableRow extends StatelessWidget {
                       child: Container(), // Spacer
                     ),
                     TableCell(
-                      child: Text(value, textAlign: TextAlign.left),
+                      child: Text(value, textAlign: TextAlign.right ),
                     ),
                   ],
                 ),
