@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:covid_19_app/Presentation/Screens/world_states.dart';
+import 'package:covid_19_app/Presentation/Screens/countries_list.dart';
+//import 'package:covid_19_app/Presentation/Screens/world_states.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 
@@ -19,8 +20,8 @@ class SplashScreenState extends State<SplashScreen>
   /* it will dispose the controller means just to make sure screen is disconnected with the controller*/
   @override
   void dispose() {
-    super.dispose();
     animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -28,7 +29,7 @@ class SplashScreenState extends State<SplashScreen>
     super.initState();
     Timer(const Duration(seconds: 5), () {
       Navigator.pushReplacement(context,
-          MaterialPageRoute(builder: (context) => const WorldStatesScreen()));
+          MaterialPageRoute(builder: (context) => const CountriesListScreen()));
     });
   }
 

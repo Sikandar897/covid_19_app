@@ -66,56 +66,69 @@ class _WorldStatesScreenState extends State<WorldStatesScreen>
                         children: [
                           PieChart(
                             dataMap: {
-                              'total':
-                                  double.parse(snapshot.data!.cases.toString()),
-                              'Recovered': double.parse(
+                              "Total": double.parse(
+                                  snapshot.data!.cases!.toString()),
+                              "Recovered": double.parse(
                                   snapshot.data!.recovered.toString()),
-                              'Deaths':
-                                  double.parse(snapshot.data!.deaths.toString())
+                              "Deaths": double.parse(
+                                  snapshot.data!.deaths.toString()),
                             },
-                            chartValuesOptions: const ChartValuesOptions(
-                                showChartValuesInPercentage: true),
-                            legendOptions: const LegendOptions(
-                              legendPosition: LegendPosition.left,
-                              legendTextStyle: TextStyle(color: Colors.white),
-                            ),
-                            chartRadius:
-                                MediaQuery.of(context).size.width / 3.2,
                             animationDuration:
                                 const Duration(milliseconds: 1200),
-                            chartType: ChartType.ring,
+                            chartLegendSpacing: 32,
+                            chartRadius:
+                                MediaQuery.of(context).size.width / 3.2,
                             colorList: colorList,
+                            initialAngleInDegree: 0,
+                            chartType: ChartType.ring,
+                            ringStrokeWidth: 25,
+                            legendOptions: const LegendOptions(
+                              showLegendsInRow: false,
+                              legendPosition: LegendPosition.left,
+                              showLegends: true,
+                              legendTextStyle: TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            chartValuesOptions: const ChartValuesOptions(
+                              showChartValueBackground: true,
+                              showChartValues: true,
+                              showChartValuesInPercentage: true,
+                              showChartValuesOutside: true,
+                              decimalPlaces: 1,
+                            ),
                           ),
                           Padding(
                             padding: EdgeInsets.symmetric(
                                 vertical:
-                                    MediaQuery.of(context).size.height * 0.06),
+                                    MediaQuery.of(context).size.height * .06),
                             child: Card(
                               child: Column(
                                 children: [
                                   ReusableRow(
-                                      title: 'Updated',
-                                      value: snapshot.data!.updated.toString()),
-                                  ReusableRow(
                                       title: 'Total Cases',
                                       value: snapshot.data!.cases.toString()),
                                   ReusableRow(
-                                      title: 'Today Cases',
-                                      value: snapshot.data!.deaths.toString()),
-                                  ReusableRow(
                                       title: 'Deaths',
-                                      value:
-                                          snapshot.data!.recovered.toString()),
-                                  ReusableRow(
-                                      title: 'Today Deaths',
-                                      value: snapshot.data!.active.toString()),
+                                      value: snapshot.data!.deaths.toString()),
                                   ReusableRow(
                                       title: 'Recovered',
                                       value:
+                                          snapshot.data!.recovered.toString()),
+                                  ReusableRow(
+                                      title: 'Active',
+                                      value: snapshot.data!.active.toString()),
+                                  ReusableRow(
+                                      title: 'Critical',
+                                      value:
                                           snapshot.data!.critical.toString()),
                                   ReusableRow(
-                                      title: 'Today Recovered',
+                                      title: 'Today Deaths',
                                       value: snapshot.data!.todayDeaths
+                                          .toString()),
+                                  ReusableRow(
+                                      title: 'Today Recovered',
+                                      value: snapshot.data!.todayRecovered
                                           .toString()),
                                 ],
                               ),
